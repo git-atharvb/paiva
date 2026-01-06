@@ -1,0 +1,49 @@
+type User @table {
+  displayName: String!
+  email: String!
+  createdAt: Timestamp!
+  photoUrl: String
+  lastLogin: Timestamp
+}
+
+type Integration @table {
+  user: User!
+  serviceName: String!
+  integrationType: String!
+  createdAt: Timestamp!
+  apiKey: String
+  oauthToken: String
+  refreshToken: String
+}
+
+type Automation @table {
+  user: User!
+  name: String!
+  description: String!
+  triggerType: String!
+  status: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  schedule: String
+  visibility: String
+}
+
+type AutomationStep @table {
+  automation: Automation!
+  stepOrder: Int!
+  actionType: String!
+  configurationJson: String!
+  createdAt: Timestamp!
+  integration: Integration
+}
+
+type Skill @table {
+  user: User!
+  name: String!
+  description: String!
+  trainingData: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  visibility: String
+  version: String
+}

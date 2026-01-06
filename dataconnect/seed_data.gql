@@ -1,0 +1,92 @@
+mutation CreateDemoData @transaction @auth(level: PUBLIC, insecureReason: "This operation is only used to seed the database with demo data and does not require authentication.") {
+  user_insertMany(data: [
+    {
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      createdAt: "2024-04-26T00:00:00Z",
+      displayName: "demouser1",
+      email: "demouser1@example.com"
+    },
+    {
+      id: "550e8400-e29b-41d4-a716-446655440001",
+      createdAt: "2024-04-26T00:00:00Z",
+      displayName: "demouser2",
+      email: "demouser2@example.com"
+    }
+  ])
+  skill_insertMany(data: [
+    {
+      id: "650e8400-e29b-41d4-a716-446655440002",
+      userId: "550e8400-e29b-41d4-a716-446655440000",
+      createdAt: "2024-04-26T00:00:00Z",
+      description: "Example skill from demouser1",
+      name: "Skill 1",
+      trainingData: "Training data 1"
+    },
+    {
+      id: "650e8400-e29b-41d4-a716-446655440003",
+      userId: "550e8400-e29b-41d4-a716-446655440001",
+      createdAt: "2024-04-26T00:00:00Z",
+      description: "Example skill from demouser2",
+      name: "Skill 2",
+      trainingData: "Training data 2"
+    }
+  ])
+  integration_insertMany(data: [
+    {
+      id: "750e8400-e29b-41d4-a716-446655440004",
+      userId: "550e8400-e29b-41d4-a716-446655440000",
+      createdAt: "2024-04-26T00:00:00Z",
+      integrationType: "Type 1",
+      serviceName: "Service 1"
+    },
+    {
+      id: "750e8400-e29b-41d4-a716-446655440005",
+      userId: "550e8400-e29b-41d4-a716-446655440001",
+      createdAt: "2024-04-26T00:00:00Z",
+      integrationType: "Type 2",
+      serviceName: "Service 2"
+    }
+  ])
+   automation_insertMany(data: [
+    {
+      id: "850e8400-e29b-41d4-a716-446655440006",
+      userId: "550e8400-e29b-41d4-a716-446655440000",
+      createdAt: "2024-04-26T00:00:00Z",
+      description: "Automation 1",
+      name: "Automation 1",
+      status: "Active",
+      triggerType: "Type 1",
+      updatedAt: "2024-04-26T00:00:00Z"
+    },
+    {
+      id: "850e8400-e29b-41d4-a716-446655440007",
+      userId: "550e8400-e29b-41d4-a716-446655440001",
+      createdAt: "2024-04-26T00:00:00Z",
+      description: "Automation 2",
+      name: "Automation 2",
+      status: "Inactive",
+      triggerType: "Type 2",
+      updatedAt: "2024-04-26T00:00:00Z"
+    }
+  ])
+  automationStep_insertMany(data: [
+    {
+      id: "950e8400-e29b-41d4-a716-446655440008",
+      automationId: "850e8400-e29b-41d4-a716-446655440006",
+      integrationId: "750e8400-e29b-41d4-a716-446655440004",
+      actionType: "Action 1",
+      configurationJson: "{}",
+      createdAt: "2024-04-26T00:00:00Z",
+      stepOrder: 1
+    },
+    {
+      id: "950e8400-e29b-41d4-a716-446655440009",
+      automationId: "850e8400-e29b-41d4-a716-446655440007",
+      integrationId: "750e8400-e29b-41d4-a716-446655440005",
+      actionType: "Action 2",
+      configurationJson: "{}",
+      createdAt: "2024-04-26T00:00:00Z",
+      stepOrder: 2
+    }
+  ])
+}

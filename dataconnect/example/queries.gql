@@ -1,0 +1,33 @@
+mutation CreateUser @auth(level: USER) {
+  user_insert(data: {
+    displayName: "New User",
+    email: "newuser@example.com",
+    createdAt_expr: "request.time"
+  })
+}
+
+query GetAutomationsForUser @auth(level: USER) {
+  automations(where: {userId: {eq_expr: "auth.uid"}}) {
+    id
+    name
+    description
+  }
+}
+
+mutation UpdateAutomation($id: UUID!, $name: String, $description: String) @auth(level: USER) {
+  automation_update(
+    key: {id: $id},
+    data: {
+      name: $name,
+      description: $description
+    }
+  )
+}
+
+query ListPublicSkills @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
+  skills(where: {visibility: {eq: "public"}}) {
+    id
+    name
+    description
+  }
+}
