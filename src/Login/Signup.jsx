@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
+import { motion } from 'framer-motion';
+import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
 import { auth, googleProvider } from '../firebase';
 import './Login.css';
 
@@ -9,6 +11,7 @@ function Signup() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   // Simple password strength calculator
@@ -29,44 +32,82 @@ function Signup() {
   const handleSignup = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMessage('');
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      await Promise.all([
+        createUserWithEmailAndPassword(auth, email, password),
+        new Promise(resolve => setTimeout(resolve, 2000))
+      ]);
       navigate('/home');
     } catch (error) {
-      alert(error.message);
+      let msg = "Failed to create account.";
+      if (error.code === 'auth/email-already-in-use') msg = "This email is already registered.";
+      if (error.code === 'auth/weak-password') msg = "Password should be at least 6 characters.";
+      if (error.code === 'auth/invalid-email') msg = "Invalid email address.";
+      setErrorMessage(msg);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleGoogleSignup = async () => {
+    setErrorMessage('');
     try {
       await signInWithPopup(auth, googleProvider);
       navigate('/home');
     } catch (error) {
-      alert(error.message);
+      setErrorMessage("Failed to sign up with Google.");
     }
   };
 
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    e.currentTarget.style.setProperty('--mouse-x', `${x}px`);
+    e.currentTarget.style.setProperty('--mouse-y', `${y}px`);
+  };
+
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <h2 className="auth-title">Create Account</h2>
+    <div className="auth-container" onMouseMove={handleMouseMove}>
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="auth-card"
+      >
+        {isLoading && (
+          <div className="progress-bar-container">
+            <div className="progress-bar" />
+          </div>
+        )}
+        <h2 className="auth-title">Create an account</h2>
+        <p className="auth-subtitle">Start your journey with PAIVA today</p>
+        {errorMessage && (
+          <div className="error-message">
+            <AlertCircle size={16} />
+            {errorMessage}
+          </div>
+        )}
         <form onSubmit={handleSignup}>
           <div className="form-group">
             <label className="form-label">Email Address</label>
-            <input
-              className="form-input"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="name@example.com"
-              required
-            />
+            <div className="input-wrapper">
+              <Mail className="input-icon" size={20} />
+              <input
+                className="form-input"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="name@example.com"
+                required
+              />
+            </div>
           </div>
           <div className="form-group">
             <label className="form-label">Password</label>
             <div className="input-wrapper">
+              <Lock className="input-icon" size={20} />
               <input
                 className="form-input"
                 type={showPassword ? "text" : "password"}
@@ -79,9 +120,13 @@ function Signup() {
                 type="button"
                 className="password-toggle"
                 onClick={() => setShowPassword(!showPassword)}
-                aria-label="Toggle password visibility"
+                aria-label={showPassword ? "Hide password" : "Show password"}
               >
-                {showPassword ? "Hide" : "Show"}
+                {showPassword ? (
+                  <EyeOff size={20} />
+                ) : (
+                  <Eye size={20} />
+                )}
               </button>
             </div>
             {password && (
@@ -100,7 +145,12 @@ function Signup() {
             </div>
           </div>
           <button type="submit" className="auth-button" disabled={isLoading}>
-            {isLoading ? 'Creating Account...' : 'Sign Up'}
+            {isLoading ? (
+              <>
+                <Loader2 className="spinner" size={20} />
+                Creating Account...
+              </>
+            ) : 'Sign Up'}
           </button>
         </form>
 
@@ -120,7 +170,7 @@ function Signup() {
           Already have an account? 
           <Link to="/" className="auth-link">Log in</Link>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
