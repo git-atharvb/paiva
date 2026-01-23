@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Login/Login';
 import Signup from './Login/Signup';
 import Home from './Login/Home';
+import Profile from './Login/Profile';
 import ForgotPassword from './Login/ForgotPassword';
 import './App.css';
 
@@ -24,6 +25,7 @@ function App() {
           <Route path="/" element={<Login theme={theme} toggleTheme={toggleTheme} />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/home" element={<Home theme={theme} toggleTheme={toggleTheme} />} />
+          <Route path="/profile" element={<Profile theme={theme} toggleTheme={toggleTheme} />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
         </Routes>
       </div>
